@@ -1,0 +1,139 @@
+html[data-bs-theme="light"] .form-control::placeholder,
+html[data-bs-theme="light"] .form-select::placeholder {
+    opacity: 0.7 !important;
+}
+
+html[data-bs-theme="light"] .form-control,
+html[data-bs-theme="light"] .form-select {
+    /* border: 1px solid #132843 !important; */
+    border: 1px solid #132843a6 !important;
+}
+
+.form-check-input {
+    border: 1px solid #132843a6 !important;
+}
+
+html[data-bs-theme="dark"] .form-control,
+html[data-bs-theme="dark"] .form-select {
+    border: 1px solid #c4ddffa6 !important;
+}
+
+html[data-bs-theme="dark"] .form-check-input {
+    border: 1px solid #c4ddffa6 !important;
+}
+
+/* */
+
+html[data-bs-theme="light"] .input-group-text {
+    border: 1px solid #132843a6 !important;
+}
+
+html[data-bs-theme="dark"] .input-group-text {
+    border: 1px solid #c4ddffa6 !important;
+}
+
+
+.bg-mute {
+    background-color: #d1d5db;
+    /* A softer, modern gray from Tailwind's gray-300 */
+    color: #1f2937;
+    /* Dark gray (Tailwind's gray-800) for better contrast */
+}
+
+html[data-bs-theme="dark"] .bg-mute {
+    background-color: #374151;
+    /* Dark gray from Tailwind's gray-700, suitable for dark mode */
+    color: #e5e7eb;
+    /* Light gray (Tailwind's gray-200) for readable text */
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.card {
+    border-color: #ddd;
+}
+
+.add-btn {
+    background-color: #eee;
+    border-radius: 0;
+    font-size: 1rem;
+}
+
+html[data-bs-theme="dark"] .add-btn {
+    color: #000;
+}
+
+.add-btn:hover {
+    background-color: #bbb;
+}
+
+
+/* search input */
+.search-container {
+    position: relative;
+}
+
+.search-input-prefix {
+    background-color: #0000004d;
+    font-size: 1rem;
+}
+
+.search-input {
+    font-weight: 700;
+    background-color: #0000004d;
+    border-color: #0000004d !important;
+}
+
+.search-input:focus {
+    border-color: #fff;
+    box-shadow: none;
+    background-color: #0000001a
+}
+
+.search-input:focus+.search-input-prefix {
+    background-color: #00000080
+}
+
+.search-result {
+    width: 100%;
+    border: solid 1px #adb5bd;
+    border-radius: 0px;
+    background-color: #fff;
+    display: none;
+    position: absolute;
+}
+
+.searchResultContainer {
+    width: 100%;
+    border-radius: 0px;
+    max-height: 20rem;
+    overflow-y: scroll;
+    list-style: none;
+    padding-left: 0 !important;
+    background-color: #fff;
+}
+
+html[data-bs-theme="dark"] .searchResultContainer {
+    background-color: #2e343a;
+
+}
+
+.searchResultItem {
+    width: 100%;
+    padding: .5rem 1rem;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer
+}
+
+.searchResultItem:hover {
+    background-color: #4549a2;
+    color: #fff;
+}
+
+html[data-bs-theme="dark"] .searchResultItem:hover {
+    background-color: #808080;
+    color: #ccc
+}
