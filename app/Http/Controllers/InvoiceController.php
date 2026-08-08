@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Datatables\InvoiceDatatable;
+use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Models\SystemSetting;
 use App\Models\Tax;
 use App\Services\InvoiceService;
 use App\Support\Toastr;
@@ -57,6 +59,7 @@ class InvoiceController extends Controller
             'todayData' => now()->format('Y-m-d'),
             'dueData' => now()->addDays(7)->format('Y-m-d'),
             'taxes' => Tax::where('active', 1)->get(),
+            'currencies' => Currency::all(),
         ]);
     }
 
@@ -73,6 +76,8 @@ class InvoiceController extends Controller
             'add_cost' => ['required', 'numeric', 'min:0'],
             'discount' => ['required', 'numeric', 'min:0'],
             'discount_type' => ['required', 'in:fixed,percentage'],
+            'service_period' => ['nullable', 'numeric'],
+            'currency' => ['nullable', 'exists:currencies,id'],
             'note' => ['nullable', 'string'],
 
             'items' => ['required', 'array'],
@@ -86,14 +91,18 @@ class InvoiceController extends Controller
 
         return TryCatchHandler::execute(function () use ($request) {
 
+            $currency = SystemSetting::first()->currency ?? Currency::first();
+
             $invoiceData = [
                 'invoice_number' => $request->invoice_number,
                 'invoice_date' => $request->invoice_date,
                 'due_date' => $request->due_date,
                 'customer_id' => $request->customer,
+                'currency_id' => $request->currency ?? $currency?->id,
                 'additional_cost' => $request->add_cost,
                 'discount' => $request->discount,
                 'discount_type' => $request->discount_type,
+                'service_period' => $request->service_period,
                 'notes' => $request->note,
             ];
 
@@ -113,7 +122,7 @@ class InvoiceController extends Controller
     public function show(Invoice $invoice)
     {
         // Eager load relations to avoid N+1 queries
-        $invoice->load(['customer', 'invoiceItems.item', 'invoiceItems.unit', 'taxes', 'payments']);
+        $invoice->load(['customer', 'currency', 'invoiceItems.item', 'invoiceItems.unit', 'taxes', 'payments']);
 
         return view('admin.invoice.show', [
             'invoice' => $invoice,
@@ -138,6 +147,7 @@ class InvoiceController extends Controller
             'todayData' => now()->format('Y-m-d'),
             'dueData' => now()->addDays(7)->format('Y-m-d'),
             'taxes' => Tax::where('active', 1)->get(),
+            'currencies' => Currency::all(),
         ]);
     }
 
@@ -164,12 +174,16 @@ class InvoiceController extends Controller
         ]);
 
         return TryCatchHandler::execute(function () use ($request, $invoice) {
+            $currency = SystemSetting::first()->currency ?? Currency::first();
+
             $invoiceData = [
                 'invoice_date' => $request->invoice_date,
                 'due_date' => $request->due_date,
+                'currency_id' => $request->currency ?? $currency?->id,
                 'additional_cost' => $request->add_cost,
                 'discount' => $request->discount,
                 'discount_type' => $request->discount_type,
+                'service_period' => $request->service_period,
                 'notes' => $request->note,
             ];
 

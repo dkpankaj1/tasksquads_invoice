@@ -27,7 +27,7 @@ class ItemController extends Controller
             'ajaxUrl' => route('item.index'),
             'columns' => [
                 ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => '#', 'searchable' => false, 'orderable' => false],
-                ['data' => 'hsn_code', 'name' => 'hsn_code', 'title' => 'Hsn Code'],
+                ['data' => 'hsn_code', 'name' => 'hsn_code', 'title' => ' HSN/SAC'],
                 ['data' => 'name', 'name' => 'name', 'title' => 'Name'],
                 ['data' => 'category', 'name' => 'category', 'title' => 'Category'],
                 ['data' => 'unit', 'name' => 'unit', 'title' => 'Unit'],

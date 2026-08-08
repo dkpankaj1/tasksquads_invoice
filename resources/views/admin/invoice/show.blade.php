@@ -36,6 +36,14 @@
                                 </span>
                             </td>
                         </tr>
+                        <tr>
+                            <td class="fw-bold">Currency:</td>
+                            <td>{{ $invoice->currency?->name ?? 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Service Period:</td>
+                            <td>{{ $invoice->service_period ? $invoice->service_period . ' days' : 'N/A' }}</td>
+                        </tr>
                     </table>
                 </div>
                 <div class="col-md-6">
@@ -78,6 +86,7 @@
                             <th class="text-light text-end">Quantity</th>
                             <th class="text-light text-end">Rate</th>
                             <th class="text-light text-end">Add. Cost</th>
+                            <th class="text-light text-end">PER</th>
                             <th class="text-light text-end">Amount</th>
                         </tr>
                     </thead>
@@ -94,9 +103,10 @@
                                 <td>{{ $item->unit->name }}</td>
                                 <td class="text-end">{{ number_format((float) $item->quantity, 2) }}
                                     {{ $item->unit->short_name }}</td>
-                                <td class="text-end">{!! format_money((float) $item->rate) !!}</td>
-                                <td class="text-end">{!! format_money((float) $item->additional_cost) !!}</td>
-                                <td class="text-end">{!! format_money((float) $item->amount) !!}</td>
+                                <td class="text-end">{!! format_money((float) $item->rate, $invoice->currency) !!}</td>
+                                <td class="text-end">{!! format_money((float) $item->additional_cost, $invoice->currency) !!}</td>
+                                <td class="text-end">{{ $item->unit->name }}</td>
+                                <td class="text-end">{!! format_money((float) $item->amount, $invoice->currency) !!}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -130,38 +140,38 @@
                             @foreach ($invoice->taxes as $tax)
                                 <tr class="bg-info bg-opacity-10">
                                     <td class="text-end border-0">{{ $tax->name }} ({{ $tax->rate }}%):</td>
-                                    <td class="text-end fw-bold border-0 text-info">{!! format_money((float) $tax->amount) !!}</td>
+                                    <td class="text-end fw-bold border-0 text-info">{!! format_money((float) $tax->amount, $invoice->currency) !!}</td>
                                 </tr>
                             @endforeach
                         @endif
                         <tr class="bg-secondary bg-opacity-25">
                             <td class="text-end border-0 fw-semibold">Sub Total:</td>
-                            <td class="text-end fw-bold border-0">{!! format_money((float) $invoice->subtotal) !!}</td>
+                            <td class="text-end fw-bold border-0">{!! format_money((float) $invoice->subtotal, $invoice->currency) !!}</td>
                         </tr>
                         <tr class="bg-warning bg-opacity-25">
                             <td class="text-end border-0">Additional Cost:</td>
-                            <td class="text-end fw-bold border-0 text-warning">{!! format_money((float) $invoice->additional_cost) !!}</td>
+                            <td class="text-end fw-bold border-0 text-warning">{!! format_money((float) $invoice->additional_cost, $invoice->currency) !!}</td>
                         </tr>
                         <tr class="bg-danger bg-opacity-25">
                             <td class="text-end border-0">Discount( {!! $invoice->discount_type == 'percentage'
                                 ? $invoice->discount . '%'
-                                : format_money((float) $invoice->discount) !!}):</td>
+                                : format_money((float) $invoice->discount, $invoice->currency) !!}):</td>
                             <td class="text-end fw-bold border-0 text-danger">
                                 {!! $invoice->discount_type == 'percentage'
-                                    ? format_money((float) ($invoice->subtotal * $invoice->discount / 100))
-                                    : format_money((float) $invoice->discount) !!}</td>
+                                    ? format_money((float) (($invoice->subtotal * $invoice->discount) / 100), $invoice->currency)
+                                    : format_money((float) $invoice->discount, $invoice->currency) !!}</td>
                         </tr>
                         <tr class="bg-success text-white">
                             <td class="text-end border-0">Total:</td>
-                            <td class="text-end fw-bold border-0 text-dark">{!! format_money((float) $invoice->total) !!}</td>
+                            <td class="text-end fw-bold border-0 text-dark">{!! format_money((float) $invoice->total, $invoice->currency) !!}</td>
                         </tr>
                         <tr class="bg-primary bg-opacity-25">
                             <td class="text-end border-0">Paid Amount:</td>
-                            <td class="text-end fw-bold border-0 text-success">{!! format_money((float) $invoice->total_paid) !!}</td>
+                            <td class="text-end fw-bold border-0 text-success">{!! format_money((float) $invoice->total_paid, $invoice->currency) !!}</td>
                         </tr>
                         <tr class="bg-danger text-white">
                             <td class="text-end border-0 fw-semibold">Due Amount:</td>
-                            <td class="text-end fw-bold border-0">{!! format_money((float) ($invoice->total - $invoice->total_paid)) !!}</td>
+                            <td class="text-end fw-bold border-0">{!! format_money((float) ($invoice->total - $invoice->total_paid), $invoice->currency) !!}</td>
                         </tr>
                     </table>
                 </div>
@@ -194,7 +204,7 @@
                                     <td>{{ format_date($payment->payment_date) }}</td>
                                     <td>{{ ucwords(str_replace('_', ' ', $payment->payment_method)) }}</td>
                                     <td>{{ $payment->reference_number ?? '-' }}</td>
-                                    <td class="text-end">{!! format_money($payment->amount) !!}</td>
+                                    <td class="text-end">{!! format_money($payment->amount, $invoice->currency) !!}</td>
                                     <td>
                                         <a href="{{ route('payment.show', $payment) }}" class="btn btn-sm btn-primary">
                                             <i class="mdi mdi-eye"></i>

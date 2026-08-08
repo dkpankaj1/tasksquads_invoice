@@ -7,6 +7,7 @@ use App\Http\Controllers\Ajax\GetItemController;
 use App\Http\Controllers\Ajax\SearchItemController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomizationController;
 use App\Http\Controllers\DashboardController;
@@ -54,6 +55,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('payment', PaymentController::class);
 
     Route::resource('unit', UnitController::class)
+        ->except(['show']);
+
+    Route::resource('currency', CurrencyController::class)
         ->except(['show']);
 
     Route::resource('tax', TaxController::class)

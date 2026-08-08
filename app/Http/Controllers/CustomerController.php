@@ -52,13 +52,14 @@ class CustomerController extends Controller
             'first_name' => ['required', 'string', 'max:50'],
             'last_name' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:255'],
-            'phone' => ['required', 'string', 'max:15'],
-            'whatsapp_mobile' => ['required', 'string', 'max:15'],
-            'address' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:100'],
-            'state' => ['required', 'string', 'max:100'],
-            'country' => ['required', 'string', 'max:100'],
-            'pin_code' => ['required', 'string', 'max:10'],
+            'phone' => ['nullable', 'string', 'max:15'],
+            'whatsapp_mobile' => ['nullable', 'string', 'max:15'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:100'],
+            'state' => ['nullable', 'string', 'max:100'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'pin_code' => ['nullable', 'string', 'max:10'],
+            'vat' => ['nullable', 'string', 'max:50'],
             'status' => ['required', 'in:0,1'],
         ]);
 
@@ -75,6 +76,7 @@ class CustomerController extends Controller
                 'state' => $data['state'],
                 'country' => $data['country'],
                 'pin_code' => $data['pin_code'],
+                'vat' => $data['vat'],
                 'active' => $data['status'],
             ]);
 
@@ -140,13 +142,14 @@ class CustomerController extends Controller
             'first_name' => ['required', 'string', 'max:50'],
             'last_name' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:255'],
-            'phone' => ['required', 'string', 'max:15'],
-            'whatsapp_mobile' => ['required', 'string', 'max:15'],
-            'address' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:100'],
-            'state' => ['required', 'string', 'max:100'],
-            'country' => ['required', 'string', 'max:100'],
-            'pin_code' => ['required', 'string', 'max:10'],
+            'phone' => ['nullable', 'string', 'max:15'],
+            'whatsapp_mobile' => ['nullable', 'string', 'max:15'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:100'],
+            'state' => ['nullable', 'string', 'max:100'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'pin_code' => ['nullable', 'string', 'max:10'],
+            'vat' => ['nullable', 'string', 'max:50'],
             'status' => ['required', 'in:0,1'],
         ]);
 
@@ -163,6 +166,7 @@ class CustomerController extends Controller
                 'state' => $data['state'],
                 'country' => $data['country'],
                 'pin_code' => $data['pin_code'],
+                'vat' => $data['vat'],
                 'active' => $data['status'],
             ]);
 

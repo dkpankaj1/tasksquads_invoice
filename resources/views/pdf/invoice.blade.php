@@ -145,10 +145,11 @@
                     <strong>{{ $setting->brand_name }}</strong><br>
                     {{ $setting->address }}, {{ $setting->city }}<br>
                     {{ $setting->state }}, {{ $setting->postal_code }}<br>
-                    <strong>State Name:</strong> {{ $setting->state }}<br>
+                    <strong>State:</strong> {{ $setting->state }}<br>
+                    <strong>Country:</strong> {{ $setting->country }}<br>
                     <strong>E-Mail:</strong> {{ $setting->contact_email }}<br>
                     <strong>Contact:</strong> {{ $setting->contact_phone }}<br>
-                    <strong>GST:</strong> {{ $setting->gstin ?? '' }}
+                    <strong>GST:</strong> {{ $setting->gstin ?? '' }}<br>
                     <strong>CIN:</strong> {{ $setting->cin ?? '' }}
                 @else
                     <strong>Company Name</strong><br>
@@ -160,12 +161,13 @@
                 <strong>Buyer (Bill to) : </strong><br>
                 <strong>{{ $invoice->customer?->full_name }}</strong><br>
                 {{ $invoice->customer?->address ?? '' }}<br>
-                {{ $invoice->customer?->city ?? '' }}<br>
-                <strong>State Name:</strong> {{ $invoice->customer->state ?? '' }}, Code:
-                {{ $invoice->customer->state_code ?? '' }}<br>
+                {{ $invoice->customer?->city ?? '' }}, {{ $invoice->customer->state ?? '' }},
+                {{ $invoice->customer->pin_code }}<br>
+                <strong>State:</strong> {{ $invoice->customer->state ?? '' }}<br>
+                <strong>Country:</strong> {{ $invoice->customer->country ?? '' }}<br>
                 <strong>E-Mail:</strong> {{ $invoice->customer->email ?? '' }}<br>
                 <strong>Contact:</strong> {{ $invoice->customer->phone ?? '' }}<br>
-                {{-- <strong>CIN/UIN/IEC:</strong> {{ $invoice->customer->cin ?? '' }}<br> --}}
+                <strong>VAT:</strong> {{ $invoice->customer->vat ?? '' }}<br>
             </td>
 
         </tr>
@@ -176,10 +178,11 @@
         <thead>
             <tr>
                 <th style="width:5%">SN</th>
-                <th style="width:35%">Item</th>
-                <th style="width:5%">HSNs</th>
-                <th style="width:10%" class="text-right">Qty</th>
-                <th style="width:15%" class="text-right">Rate</th>
+                <th style="width:30%">Item</th>
+                <th style="width:5%">HSN/SAC</th>
+                <th style="width:10%" class="text-right">Term/Unit</th>
+                <th style="width:13%" class="text-right">Rate</th>
+                <th style="width:7%" class="text-right">Per</th>
                 <th style="width:12%" class="text-right">Add. Cost</th>
                 <th style="width:18%" class="text-right">Amount</th>
             </tr>
@@ -193,11 +196,11 @@
                         <span class="small">{{ $row->description }}</span>
                     </td>
                     <td>{{ $row->item?->hsn_code }}</td>
-                    <td class="text-right">{{ number_format((float) $row->quantity, 2) }} {{ $row->unit->short_name }}
-                    </td>
-                    <td class="text-right">{!! format_money((float) $row->rate) !!}</td>
-                    <td class="text-right">{!! format_money((float) $row->additional_cost) !!}</td>
-                    <td class="text-right">{!! format_money((float) $row->amount) !!}</td>
+                    <td class="text-right">{{ number_format((float) $row->quantity, 2) }}</td>
+                    <td class="text-right">{!! format_money((float) $row->rate, $invoice->currency) !!}</td>
+                    <td class="text-right">{{ $row->unit->name }}</td>
+                    <td class="text-right">{!! format_money((float) $row->additional_cost, $invoice->currency) !!}</td>
+                    <td class="text-right">{!! format_money((float) $row->amount, $invoice->currency) !!}</td>
                 </tr>
             @endforeach
 
@@ -210,50 +213,52 @@
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
+                    <td>&nbsp;</td>
                 </tr>
             @endfor
             <tr class="border">
-                <td class="text-right" colspan="6">Item Total</td>
-                <td class="text-right">{!! format_money((float) $invoice->invoiceItems->sum('amount')) !!}</td>
+                <td class="text-right" colspan="7">Item Total</td>
+                <td class="text-right">{!! format_money((float) $invoice->invoiceItems->sum('amount'), $invoice->currency) !!}</td>
             </tr>
         </tbody>
 
         <tfoot>
             @foreach ($invoice->taxes as $tax)
                 <tr>
-                    <td class="text-left" colspan="3"></td>
+                    <td class="text-left" colspan="4"></td>
                     <td class="text-right" colspan="3"><strong>{{ $tax->name }} : </strong></td>
                     <td class="text-right">(<span class="taxes">{{ $tax->rate }}</span> %)</td>
                 </tr>
             @endforeach
             <tr>
-                <td class="text-left" colspan="3"></td>
+                <td class="text-left" colspan="4"></td>
                 <td class="text-right" colspan="3"><strong>Additional Cost</strong></td>
-                <td class="text-right">{!! format_money((float) $invoice->additional_cost) !!}</td>
+                <td class="text-right">{!! format_money((float) $invoice->additional_cost, $invoice->currency) !!}</td>
             </tr>
             <tr>
-                <td class="text-left" colspan="3"></td>
+                <td class="text-left" colspan="4"></td>
                 <td class="text-right" colspan="3"><strong>Discount
                         ({!! $invoice->discount_type == 'percentage'
                             ? $invoice->discount . '%'
-                            : format_money((float) $invoice->discount) !!})</strong>
+                            : format_money((float) $invoice->discount, $invoice->currency) !!})</strong>
                 </td>
                 <td class="text-right"> - {!! format_money(
                     (float) ($invoice->discount_type == 'percentage'
                         ? ($invoice->subtotal * $invoice->discount) / 100
                         : $invoice->discount),
+                    $invoice->currency,
                 ) !!}</td>
             </tr>
             <tr>
-                <td class="text-left" colspan="3"></td>
+                <td class="text-left" colspan="4"></td>
                 <td class="text-right" colspan="3"><strong>Total</strong></td>
-                <td class="text-right"><strong>{!! format_money((float) $invoice->total) !!}</strong></td>
+                <td class="text-right"><strong>{!! format_money((float) $invoice->total, $invoice->currency) !!}</strong></td>
             </tr>
             <tr class="border">
-                <td colspan="7">
+                <td colspan="8">
                     <div>
                         <span style="font-size: 9px">Amount Chargeable (in words):</span><br>
-                        <strong>{{ ucwords(number_to_words($invoice->total)) }} Only</strong>
+                        <strong>{{ ucwords(number_to_words($invoice->total, $invoice->currency)) }} Only</strong>
                     </div>
                 </td>
             </tr>
@@ -280,8 +285,8 @@
                 <tr>
                     <td>{{ $tax->name }}</td>
                     <td>{{ $tax->rate }} %</td>
-                    <td class="text-right">{!! format_money($invoice->invoiceItems->sum('amount')) !!}</td>
-                    <td class="text-right">{!! format_money(($invoice->invoiceItems->sum('amount') * $tax->rate) / 100) !!}</td>
+                    <td class="text-right">{!! format_money($invoice->invoiceItems->sum('amount'), $invoice->currency) !!}</td>
+                    <td class="text-right">{!! format_money(($invoice->invoiceItems->sum('amount') * $tax->rate) / 100, $invoice->currency) !!}</td>
                 </tr>
                 @php
                     $totalTaxAmount += ($invoice->invoiceItems->sum('amount') * $tax->rate) / 100;
@@ -292,17 +297,31 @@
         <tfoot>
             <tr>
                 <td class="text-right" colspan="3"><strong>Total</strong></td>
-                <td class="text-right">{!! format_money($totalTaxAmount) !!}</td>
+                <td class="text-right">{!! format_money($totalTaxAmount, $invoice->currency) !!}</td>
             </tr>
             <tr>
                 <td colspan="4">
                     <div>
                         <span style="font-size: 9px">Tax Amount (in words):</span><br>
-                        <strong>{{ ucwords(number_to_words($totalTaxAmount)) }} Only</strong>
+                        <strong>{{ ucwords(number_to_words($totalTaxAmount, $invoice->currency)) }} Only</strong>
                     </div>
                 </td>
             </tr>
         </tfoot>
+    </table>
+
+    <table class="table border">
+        <tr>
+            <th>Transaction No:</th>
+            <th>Transaction Date:</th>
+            <th>Service Period:</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>{{ $invoice->service_period }} Days</td>
+        </tr>
+
     </table>
 
     <!-- Footer -->
@@ -315,11 +334,15 @@
                 <strong>Account Number:</strong> {{ $setting->account_number }}<br>
                 <strong>IFSC Code:</strong> {{ $setting->ifsc_code }} &nbsp;|&nbsp;
                 <strong>SWIFT/BIC Code:</strong> {{ $setting->swift_bic_code }}<br>
-                <strong>Branch:</strong> {{ $setting->branch }}
+                <strong>IBAN:</strong> XXXXXXXXXX <br>
+                <strong>Branch:</strong> {{ $setting->branch }} <br>
             </td>
             <td style="width: 50%; border: 1px solid #000; padding: 8px; text-align: right; vertical-align: top;">
                 for {{ $setting->brand_name ?? 'Your Company Name' }}<br><br>
-                <img style="height: 50px" src="{{ $setting->stamp_image }}" alt="">
+                <img style="height: 100px" src="{{ $setting->stamp_image }}" alt="">
+                </br>
+                <small>Authorized Signatory</small>
+
             </td>
         </tr>
     </table>
@@ -331,6 +354,13 @@
                 <span class="small">
                     {{-- Invoice specific notes can be added here --}}
                     {{ $customization->note ?? 'We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.' }}
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span style="font-size: 9px;font-weight: bold">*
+                    {{ $customization->legal_note ?? 'LETTER OF UNDERTAKING WITHOUT PAYMENT OF INTEGRATED TAX' }}
                 </span>
             </td>
         </tr>

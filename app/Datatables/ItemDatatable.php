@@ -16,7 +16,7 @@ class ItemDatatable extends BaseDatatable
     {
         return $datatable
             ->addIndexColumn()
-
+            
             ->addColumn('category', function ($data) {
                 return $data->category->name;
             })

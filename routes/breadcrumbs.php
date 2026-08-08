@@ -199,3 +199,19 @@ Breadcrumbs::for('account.password', function (BreadcrumbTrail $trail) {
     $trail->parent('account.index');
     $trail->push('Change Password', route('account.password'));
 });
+
+// Currencies
+Breadcrumbs::for('currency.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Currencies', route('currency.index'));
+});
+
+Breadcrumbs::for('currency.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('currency.index');
+    $trail->push('Create Currency', route('currency.create'));
+});
+
+Breadcrumbs::for('currency.edit', function (BreadcrumbTrail $trail, $currency) {
+    $trail->parent('currency.index');
+    $trail->push('Edit Currency', route('currency.edit', $currency));
+});

@@ -254,6 +254,29 @@
             <div class="col-lg-8 col-md-12 mb-3 mb-lg-0">
                 <div class="card">
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <x-input-label name="service_period" text="Service Period (Days)" />
+                                    <x-input-field name="service_period"
+                                        value="{{ old('service_period', $invoice->service_period) }}"
+                                        placeholder="Service Period" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <x-input-label name="currency" text="Currency" />
+                                    <x-input-select name="currency">
+                                        @foreach ($currencies as $currency)
+                                            <option value="{{ $currency->id }}"
+                                                {{ old('currency', $invoice->currency_id) == $currency->id ? 'selected' : '' }}>
+                                                {{ $currency->name }} [{{ $currency->id }}]
+                                            </option>
+                                        @endforeach
+                                    </x-input-select>
+                                </div>
+                            </div>
+                        </div>
                         <div class="mb-3">
                             <x-input-label name="note" text="Invoice Note" />
                             <textarea name="note" class="form-control" rows="5" placeholder="Write invoice notes...">{{ old('note', $invoice->notes) }}</textarea>
@@ -372,7 +395,7 @@
             });
         </script>
     @endpush
-    
+
     @push('pageCss')
         <style>
             .sortable-ghost {

@@ -61,6 +61,7 @@ class CustomizationController extends Controller
             'sequence' => ['required', 'numeric', 'min:0', 'max:100'],
             'delimiter' => ['required', 'string'],
             'note' => ['nullable', 'string'],
+            'legal_note' => ['nullable', 'string'],
         ]);
 
         return TryCatchHandler::execute(function () use ($data, $customization) {
@@ -69,7 +70,7 @@ class CustomizationController extends Controller
                 'delimiter' => $data['delimiter'],
                 'sequence' => $data['sequence'],
                 'note' => $data['note'],
-
+                'legal_note' => $data['legal_note'] ?? null,
             ]);
             Toastr::success(__('messages.success.updated', ['item' => 'Tax type']));
 

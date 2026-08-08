@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <x-breadcrumbs :render="Breadcrumbs::render('customization.edit', $customization)" />
-    
+
     <x-card title="{{ text_capitalize($customization->type) }} Customize">
         <form action="{{ route('customization.update', $customization) }}" method="post">
             @csrf
@@ -43,7 +43,8 @@
                                     supports character length
                                     of up to 6 chars.</p>
                             </td>
-                            <td><x-input-field name="sequence" value="{{ old('sequence', $customization->sequence) }}" />
+                            <td><x-input-field name="sequence"
+                                    value="{{ old('sequence', $customization->sequence) }}" />
                             </td>
                         </tr>
 
@@ -58,6 +59,21 @@
                         <tr>
                             <td colspan="2">
                                 <x-input-textarea name="note" value="{{ old('note', $customization->note) }}" />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <h5>Legal Note</h5>
+                                <p>The Legal Note field allows you to define legal/disclaimer text to be printed on
+                                    invoices and documents (e.g., "This is a computer-generated invoice").</p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <x-input-textarea name="legal_note"
+                                    value="{{ old('legal_note', $customization->legal_note) }}" />
                             </td>
                         </tr>
                     </table>

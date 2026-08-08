@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('delimiter');
             $table->string('sequence');
             $table->text('note')->nullable();
+            $table->text('legal_note')->nullable();
             $table->timestamps();
         });
     }

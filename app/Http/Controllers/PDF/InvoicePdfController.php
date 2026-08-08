@@ -18,10 +18,9 @@ class InvoicePdfController extends Controller
      * Route model binding will inject the Invoice instance.
      */
     public function __invoke(Invoice $invoice): Response
-    // public function __invoke(Invoice $invoice)
     {
         // Eager load required relations
-        $invoice->load(['customer', 'invoiceItems.item', 'invoiceItems.unit', 'taxes']);
+        $invoice->load(['customer', 'currency', 'invoiceItems.item', 'invoiceItems.unit', 'taxes']);
 
         // Prepare tax summary data
         $appliedTaxes = $invoice->taxes;
@@ -45,12 +44,6 @@ class InvoicePdfController extends Controller
         $setting = Setting::first();
         $customization = Customization::where('type', 'invoice')->first();
 
-        // return view('pdf.invoice', [
-        //     'invoice' => $invoice,
-        //     'taxSummary' => $taxSummary,
-        //     'setting' => $setting,
-        //     'customization' => $customization,
-        // ]);
         // Render HTML via a Blade view
         $html = view('pdf.invoice', [
             'invoice' => $invoice,
@@ -70,7 +63,9 @@ class InvoicePdfController extends Controller
         $dompdf = new Dompdf($options);
 
         $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->setPaper('legal', 'portrait');
+        // $dompdf->setPaper('A4', 'portrait');
+
         $dompdf->render();
 
         $filename = 'invoice-'.$invoice->invoice_number.'.pdf';

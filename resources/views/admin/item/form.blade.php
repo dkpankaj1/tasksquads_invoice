@@ -1,5 +1,5 @@
 <x-app-layout>
-   
+
     @if (isset($item))
         <x-breadcrumbs :render="Breadcrumbs::render('item.edit', $item)" />
     @else
@@ -18,9 +18,10 @@
                     <div class="row">
 
                         <div class="mb-3 col-md-4">
-                            <x-input-label name="hsn_code" text="HSN Code" />
-                            <x-input-field name="hsn_code" value="{{ old('hsn_code', isset($item) ? $item->hsn_code : '') }}"
-                                placeholder="Enter HSN code..." />
+                            <x-input-label name="hsn_code" text="HSN/SAC" />
+                            <x-input-field name="hsn_code"
+                                value="{{ old('hsn_code', isset($item) ? $item->hsn_code : '') }}"
+                                placeholder="Enter HSN/SAC code..." />
                         </div>
 
                         <div class="mb-3 col-md-8">
@@ -61,7 +62,8 @@
 
                         <div class="mb-3 col-md-6">
                             <x-input-label name="additional_cost" text="Additional Cost (per unit)" />
-                            <x-input-field name="additional_cost" value="{{ old('price', isset($item) ? $item->additional_cost : '') }}"
+                            <x-input-field name="additional_cost"
+                                value="{{ old('price', isset($item) ? $item->additional_cost : '') }}"
                                 placeholder="Enter additional cost" />
                         </div>
 

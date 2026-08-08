@@ -108,9 +108,9 @@ class DefaultSeeder extends Seeder
     private function seedFinanceYears(): void
     {
         FinanceYear::create([
-            'name' => '2025-2026',
-            'start' => '2025-04-01',
-            'end' => '2026-03-31',
+            'name' => '2026-2027',
+            'start' => '2026-04-01',
+            'end' => '2027-03-31',
         ]);
     }
 
@@ -120,8 +120,9 @@ class DefaultSeeder extends Seeder
     private function seedUnits(): void
     {
         $units = [
-            ['name' => 'Piece', 'short_name' => 'PC'],
-            ['name' => 'Gram', 'short_name' => 'GM'],
+            ['name' => 'Days', 'short_name' => 'Day'],
+            ['name' => 'Month', 'short_name' => 'MTH'],
+            ['name' => 'Year', 'short_name' => 'YER'],
         ];
 
         foreach ($units as $unit) {
@@ -135,9 +136,7 @@ class DefaultSeeder extends Seeder
     private function seedCategories(): void
     {
         $categories = [
-            ['name' => 'Silver', 'short_name' => 'Silver'],
-            ['name' => 'Gold', 'short_name' => 'Gold'],
-            ['name' => 'Diamond', 'short_name' => 'Diamond'],
+            ['name' => 'Digital Product', 'short_name' => 'DP'],
         ];
 
         foreach ($categories as $category) {
@@ -155,11 +154,18 @@ class DefaultSeeder extends Seeder
                 'name' => 'United States Dollar',
                 'code' => 'USD',
                 'symbol' => '$',
+                'exchange_rate' => 1,
+                'major_unit' => 'dollar',
+                'minor_unit' => 'cent',
+                'is_base' => true,
             ],
             [
                 'name' => 'Indian Rupee',
                 'code' => 'INR',
                 'symbol' => '₹',
+                'exchange_rate' => 93.20,
+                'major_unit' => 'rupee',
+                'minor_unit' => 'paisa',
             ],
         ];
 

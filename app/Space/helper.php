@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Currency;
 use App\Models\Customization;
 use App\Models\Invoice;
 use App\Models\Payment;
@@ -26,11 +27,12 @@ function format_date($date, $formate = null)
 
     return $date->format($formate);
 }
-function format_money($amount, $currency = null)
+function format_money(float $amount, ?Currency $currency = null)
 {
     if (! $currency) {
-        $currency = SystemSetting::first()->currency->symbol;
+        $currency = SystemSetting::first()->currency;
     }
+    $amount = $amount * $currency->exchange_rate;
 
     $formate_amount = number_format(
         $amount,
@@ -39,7 +41,7 @@ function format_money($amount, $currency = null)
         ','
     );
 
-    return "<span>$currency $formate_amount</span>";
+    return "<span>$currency->symbol $formate_amount</span>";
 }
 function format_money_plaintext($amount, $currency = null)
 {
@@ -99,13 +101,18 @@ function pad_number($number, $digitCount)
 {
     return str_pad($number, $digitCount, '0', STR_PAD_LEFT);
 }
-function number_to_words($number): string
+function number_to_words($number, ?Currency $currency = null): string
 {
+    if (! $currency) {
+        $currency = SystemSetting::first()->currency;
+    }
+    $number = $number * $currency->exchange_rate;
+
     $number = (float) $number;
 
     // Handle negative numbers
     if ($number < 0) {
-        return 'minus '.number_to_words(abs($number));
+        return 'minus '.number_to_words(abs($number), $currency);
     }
 
     // Handle zero
@@ -113,228 +120,104 @@ function number_to_words($number): string
         return 'zero';
     }
 
-    // Determine currency labels based on system setting
-    $currencyCode = system_setting()?->currency?->code ?? 'INR';
-
-    if (strtoupper($currencyCode) === 'INR') {
-        return number_to_words_inr($number);
-    }
-
-    return number_to_words_international($number);
-}
-
-function number_to_words_inr(float $number): string
-{
     $integerPart = (int) $number;
     $decimalPart = round(($number - $integerPart) * 100);
+
+    $majorUnit = $currency->major_unit ?? 'unit';
+    $minorUnit = $currency->minor_unit ?? 'cent';
 
     $words = '';
 
     if ($integerPart > 0) {
-        $words = convert_integer_to_words_inr($integerPart);
-        $words .= $integerPart == 1 ? ' rupee' : ' rupees';
+        $words = convert_number_to_words($integerPart, $currency->code);
+        $words .= ' '.pluralize_unit($majorUnit, $integerPart);
     }
 
     if ($decimalPart > 0) {
         if ($words !== '') {
             $words .= ' and ';
         }
-        $words .= convert_integer_to_words_inr($decimalPart);
-        $words .= $decimalPart == 1 ? ' paisa' : ' paise';
+        $words .= convert_number_to_words($decimalPart, $currency->code);
+        $words .= ' '.pluralize_unit($minorUnit, $decimalPart);
     }
 
     return $words;
 }
 
-function number_to_words_international(float $number): string
+/**
+ * Pluralize a unit name based on count.
+ */
+function pluralize_unit(string $unit, int $count): string
 {
-    $integerPart = (int) $number;
-    $decimalPart = round(($number - $integerPart) * 100);
-
-    $words = '';
-
-    if ($integerPart > 0) {
-        $words = convert_integer_to_words_international($integerPart);
-        $words .= $integerPart == 1 ? ' dollar' : ' dollars';
+    if ($count === 1) {
+        return $unit;
     }
 
-    if ($decimalPart > 0) {
-        if ($words !== '') {
-            $words .= ' and ';
-        }
-        $words .= convert_integer_to_words_international($decimalPart);
-        $words .= $decimalPart == 1 ? ' cent' : ' cents';
-    }
+    // Special irregular plurals
+    $irregulars = [
+        'paisa' => 'paise',
+    ];
 
-    return $words;
+    return $irregulars[$unit] ?? ($unit.'s');
 }
 
-function convert_integer_to_words_inr(int $number): string
+/**
+ * Convert an integer to words, using Indian or International numbering based on currency code.
+ */
+function convert_number_to_words(int $number, string $currencyCode): string
 {
     $ones = [
-        '',
-        'one',
-        'two',
-        'three',
-        'four',
-        'five',
-        'six',
-        'seven',
-        'eight',
-        'nine',
-        'ten',
-        'eleven',
-        'twelve',
-        'thirteen',
-        'fourteen',
-        'fifteen',
-        'sixteen',
-        'seventeen',
-        'eighteen',
-        'nineteen',
+        '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
+        'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen',
     ];
 
     $tens = [
-        '',
-        '',
-        'twenty',
-        'thirty',
-        'forty',
-        'fifty',
-        'sixty',
-        'seventy',
-        'eighty',
-        'ninety',
+        '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
     ];
 
     if ($number == 0) {
         return '';
     }
 
+    $isIndian = strtoupper($currencyCode) === 'INR';
     $words = '';
 
-    // Handle crores (10,000,000)
-    if ($number >= 10000000) {
-        $crores = (int) ($number / 10000000);
-        $words .= convert_integer_to_words_inr($crores).' crore ';
-        $number %= 10000000;
-    }
-
-    // Handle lakhs (100,000)
-    if ($number >= 100000) {
-        $lakhs = (int) ($number / 100000);
-        $words .= convert_integer_to_words_inr($lakhs).' lakh ';
-        $number %= 100000;
-    }
-
-    // Handle thousands (1,000)
-    if ($number >= 1000) {
-        $thousands = (int) ($number / 1000);
-        $words .= convert_integer_to_words_inr($thousands).' thousand ';
-        $number %= 1000;
-    }
-
-    // Handle hundreds (100)
-    if ($number >= 100) {
-        $hundreds = (int) ($number / 100);
-        $words .= $ones[$hundreds].' hundred ';
-        $number %= 100;
-    }
-
-    // Handle tens and ones
-    if ($number >= 20) {
-        $tensDigit = (int) ($number / 10);
-        $onesDigit = $number % 10;
-        $words .= $tens[$tensDigit];
-        if ($onesDigit > 0) {
-            $words .= ' '.$ones[$onesDigit];
+    // Indian numbering: crore (10^7), lakh (10^5)
+    if ($isIndian) {
+        if ($number >= 10000000) {
+            $words .= convert_number_to_words((int) ($number / 10000000), $currencyCode).' crore ';
+            $number %= 10000000;
         }
-    } elseif ($number > 0) {
-        $words .= $ones[$number];
+        if ($number >= 100000) {
+            $words .= convert_number_to_words((int) ($number / 100000), $currencyCode).' lakh ';
+            $number %= 100000;
+        }
+    }
+    // International numbering: billion (10^9), million (10^6)
+    else {
+        if ($number >= 1000000000) {
+            $words .= convert_number_to_words((int) ($number / 1000000000), $currencyCode).' billion ';
+            $number %= 1000000000;
+        }
+        if ($number >= 1000000) {
+            $words .= convert_number_to_words((int) ($number / 1000000), $currencyCode).' million ';
+            $number %= 1000000;
+        }
     }
 
-    return trim($words);
-}
-
-function convert_integer_to_words_international(int $number): string
-{
-    $ones = [
-        '',
-        'one',
-        'two',
-        'three',
-        'four',
-        'five',
-        'six',
-        'seven',
-        'eight',
-        'nine',
-        'ten',
-        'eleven',
-        'twelve',
-        'thirteen',
-        'fourteen',
-        'fifteen',
-        'sixteen',
-        'seventeen',
-        'eighteen',
-        'nineteen',
-    ];
-
-    $tens = [
-        '',
-        '',
-        'twenty',
-        'thirty',
-        'forty',
-        'fifty',
-        'sixty',
-        'seventy',
-        'eighty',
-        'ninety',
-    ];
-
-    if ($number == 0) {
-        return '';
-    }
-
-    $words = '';
-
-    // Handle billions (1,000,000,000)
-    if ($number >= 1000000000) {
-        $billions = (int) ($number / 1000000000);
-        $words .= convert_integer_to_words_international($billions).' billion ';
-        $number %= 1000000000;
-    }
-
-    // Handle millions (1,000,000)
-    if ($number >= 1000000) {
-        $millions = (int) ($number / 1000000);
-        $words .= convert_integer_to_words_international($millions).' million ';
-        $number %= 1000000;
-    }
-
-    // Handle thousands (1,000)
+    // Shared: thousand, hundred, tens, ones
     if ($number >= 1000) {
-        $thousands = (int) ($number / 1000);
-        $words .= convert_integer_to_words_international($thousands).' thousand ';
+        $words .= convert_number_to_words((int) ($number / 1000), $currencyCode).' thousand ';
         $number %= 1000;
     }
-
-    // Handle hundreds (100)
     if ($number >= 100) {
-        $hundreds = (int) ($number / 100);
-        $words .= $ones[$hundreds].' hundred ';
+        $words .= $ones[(int) ($number / 100)].' hundred ';
         $number %= 100;
     }
-
-    // Handle tens and ones
     if ($number >= 20) {
-        $tensDigit = (int) ($number / 10);
-        $onesDigit = $number % 10;
-        $words .= $tens[$tensDigit];
-        if ($onesDigit > 0) {
-            $words .= ' '.$ones[$onesDigit];
+        $words .= $tens[(int) ($number / 10)];
+        if ($number % 10 > 0) {
+            $words .= ' '.$ones[$number % 10];
         }
     } elseif ($number > 0) {
         $words .= $ones[$number];

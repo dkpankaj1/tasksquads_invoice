@@ -21,6 +21,7 @@ class Customer extends Model
         'state',
         'country',
         'pin_code',
+        'vat',
         'active',
         'balance',
     ];

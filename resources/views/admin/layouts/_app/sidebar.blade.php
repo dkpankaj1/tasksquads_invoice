@@ -10,7 +10,7 @@
             </a>
         </li>
 
-         <li class="menu-title">Invoices</li>
+        <li class="menu-title">Invoices</li>
 
         <li class="menu-item">
             <a href="{{ route('invoice.index') }}" class="menu-link waves-effect">
@@ -35,7 +35,7 @@
             </a>
         </li>
 
-         <li class="menu-title">People</li>
+        <li class="menu-title">People</li>
 
         <li class="menu-item">
             <a href="{{ route('customer.index') }}" class="menu-link waves-effect">
@@ -85,6 +85,12 @@
                         </a>
                     </li>
 
+                    <li class="menu-item">
+                        <a href="{{ route('currency.index') }}" class="menu-link">
+                            <span class="menu-text">Currency</span>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
         </li>
@@ -104,7 +110,7 @@
                             <span class="menu-text">System Settings</span>
                         </a>
                     </li>
-                    
+
                     <li class="menu-item">
                         <a href="{{ route('settings.edit') }}" class="menu-link">
                             <span class="menu-text">General Settings</span>

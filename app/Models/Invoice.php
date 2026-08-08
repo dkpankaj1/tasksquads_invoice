@@ -17,12 +17,14 @@ class Invoice extends Model
         'invoice_date',
         'due_date',
         'customer_id',
+        'currency_id',
         'additional_cost',
         'discount',
         'discount_type',
         'subtotal',
         'total',
         'total_paid',
+        'service_period',
         'status',
         'notes',
     ];
@@ -55,6 +57,11 @@ class Invoice extends Model
                 $invoice->finance_year_id = $systemSetting->finance_year_id;
             }
         });
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
     }
 
     public function customer()

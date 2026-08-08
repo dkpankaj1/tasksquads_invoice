@@ -88,6 +88,13 @@
                                 placeholder="Enter pinCode.." />
                         </div>
 
+                        <div class="col-md-6 mb-3">
+                            <x-input-label name="vat" text="VAT Number" />
+                            <x-input-field name="vat"
+                                value="{{ old('vat', isset($customer) ? $customer->vat : '') }}"
+                                placeholder="Enter VAT number.." />
+                        </div>
+
                         <div class="col-12 mb-3">
                             <x-input-label name="status" text="Status" />
                             <x-input-select name="status">

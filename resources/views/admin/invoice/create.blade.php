@@ -82,7 +82,7 @@
                             <tr>
                                 <th style="min-width: 200px; width: 35%" class="text-light">Item</th>
                                 <th style="min-width: 100px; width: 10%;" class="text-light">HSN Code</th>
-                                <th style="min-width: 80px; width: 10%;" class="text-light">Unit</th>
+                                <th style="min-width: 80px; width: 10%;" class="text-light">Per</th>
                                 <th style="min-width: 100px; width: 10%;" class="text-light">Quantity</th>
                                 <th style="min-width: 100px; width: 10%" class="text-light">Price</th>
                                 <th style="min-width: 120px; width: 10%;" class="text-light">Additional
@@ -181,6 +181,28 @@
             <div class="col-lg-8 col-md-12 mb-3 mb-lg-0">
                 <div class="card">
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <x-input-label name="service_period" text="Service Period (Days)" />
+                                    <x-input-field name="service_period" value="{{ old('service_period') }}"
+                                        placeholder="Service Period" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <x-input-label name="currency" text="Currency" />
+                                    <x-input-select name="currency">
+                                        @foreach ($currencies as $currency)
+                                            <option value="{{ $currency->id }}"
+                                                {{ old('category', '') == $currency->id ? 'selected' : '' }}>
+                                                {{ $currency->name }} [{{ $currency->id }}]
+                                            </option>
+                                        @endforeach
+                                    </x-input-select>
+                                </div>
+                            </div>
+                        </div>
                         <div class="mb-3">
                             <x-input-label name="note" text="Invoice Note" />
                             <textarea name="note" class="form-control" rows="5" placeholder="Write invoice notes...">{{ old('note') }}</textarea>

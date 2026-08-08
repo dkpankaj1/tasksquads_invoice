@@ -2,9 +2,10 @@
 
     <x-breadcrumbs :render="Breadcrumbs::render('customization.index')" />
 
-    <x-card title="Customization">
+    <x-card title="Document Numbering Customization">
         <div class="row">
-            <div class="col-md-2">
+            {{-- Sidebar tabs --}}
+            <div class="col-md-3">
                 <div class="nav flex-column nav-pills nav-pills-tab" id="v-pills-tab" role="tablist"
                     aria-orientation="vertical">
 
@@ -13,12 +14,16 @@
                             id="v-pills-{{ $customization->type }}-tab" data-bs-toggle="pill"
                             href="#v-pills-{{ $customization->type }}" role="tab"
                             aria-controls="v-pills-{{ $customization->type }}" aria-selected="true">
-                            {{ text_capitalize($customization->type) }}</a>
+                            <i class="mdi mdi-file-document-outline me-1"></i>
+                            {{ text_capitalize($customization->type) }}
+                        </a>
                     @endforeach
 
                 </div>
             </div>
-            <div class="col-md-10">
+
+            {{-- Content --}}
+            <div class="col-md-9">
                 <div class="tab-content pt-0">
 
                     @foreach ($customizations as $key => $customization)
@@ -26,74 +31,85 @@
                             id="v-pills-{{ $customization->type }}" role="tabpanel"
                             aria-labelledby="v-pills-{{ $customization->type }}-tab">
 
-                            <div class="d-flex justify-content-end w-100">
+                            {{-- Header with edit button --}}
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">{{ text_capitalize($customization->type) }} Numbering Format</h5>
                                 <a href="{{ route('customization.edit', $customization) }}"
-                                    class="btn btn-dark px-4 waves-effect waves-light">
+                                    class="btn btn-dark px-3 waves-effect waves-light">
                                     <i class="mdi mdi-pen me-1"></i> Edit
                                 </a>
                             </div>
 
                             <hr>
 
-                            <table class="table table-sm">
-                                <tbody class="border-bottom">
-                                    <tr>
-                                        <th>Component</th>
-                                        <th>Parameter</th>
-                                    </tr>
-                                </tbody>
-                                <tr>
-                                    <td>
-                                        <h5>Series</h5>
-                                        <p>To set a static prefix/postfix like 'INV' across your company. It
-                                            supports character length
-                                            of up to 6 chars.</p>
-                                    </td>
-                                    <td><x-input-field name="series" value="{{ $customization->series }}" /></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <h5>Delimiter</h5>
-                                        <p>Single character for specifying the boundary between 2 separate
-                                            components. By default its
-                                            set to -</p>
-                                    </td>
-                                    <td><x-input-field name="delimiter" value="{{ $customization->delimiter }}" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <h5>Sequence</h5>
-                                        <p>To set a static prefix/postfix like 'INV' across your company. It
-                                            supports character length
-                                            of up to 6 chars.</p>
-                                    </td>
-                                    <td><x-input-field name="sequence" value="{{ $customization->sequence }}" />
-                                    </td>
-                                </tr>
+                            {{-- Numbering Components --}}
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <div class="card border">
+                                        <div class="card-body text-center py-3">
+                                            <small class="text-muted text-uppercase">Series</small>
+                                            <h4 class="mb-0 mt-1">
+                                                <code class="fs-5">{{ $customization->series }}</code>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card border">
+                                        <div class="card-body text-center py-3">
+                                            <small class="text-muted text-uppercase">Delimiter</small>
+                                            <h4 class="mb-0 mt-1">
+                                                <code class="fs-5">{{ $customization->delimiter }}</code>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card border">
+                                        <div class="card-body text-center py-3">
+                                            <small class="text-muted text-uppercase">Sequence Digits</small>
+                                            <h4 class="mb-0 mt-1">
+                                                <code class="fs-5">{{ $customization->sequence }}</code>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                <tr>
-                                    <td colspan="2">
-                                        <h5>Preview {{ $customization->type }} number : [
-                                            {{ $customization->series }}{{ $customization->delimiter }}{{ pad_number(1, $customization->sequence) }}
-                                            ]</h5>
-                                    </td>
-                                </tr>
+                            {{-- Preview --}}
+                            <div class="card border bg-light mb-4">
+                                <div class="card-body text-center py-3">
+                                    <small class="text-muted text-uppercase d-block mb-1">Number Preview</small>
+                                    <h3 class="mb-0">
+                                        <code
+                                            class="fs-3 text-dark">{{ $customization->series }}{{ $customization->delimiter }}{{ pad_number(1, $customization->sequence) }}</code>
+                                    </h3>
+                                </div>
+                            </div>
 
-                                <tr>
-                                    <td colspan="2">
-                                        <h5>Notes</h5>
-                                        <p>The Notes field allows you to define custom text to be printed at the bottom
-                                            of {{ $customization->type }} documents.</p>
-                                    </td>
-                                </tr>
+                            {{-- Notes --}}
+                            <div class="card border mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0"><i class="mdi mdi-note-text-outline me-1"></i> Notes</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-0 text-muted">
+                                        {{ $customization->note ?: 'No notes configured.' }}
+                                    </p>
+                                </div>
+                            </div>
 
-                                <tr>
-                                    <td colspan="2">
-                                        <x-input-textarea name="note" value="{{ $customization->note }}" />
-                                    </td>
-                                </tr>
-                            </table>
+                            {{-- Legal Note --}}
+                            <div class="card border">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0"><i class="mdi mdi-shield-check-outline me-1"></i> Legal Note</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-0 text-muted">
+                                        {{ $customization->legal_note ?: 'No legal note configured.' }}
+                                    </p>
+                                </div>
+                            </div>
 
                         </div>
                     @endforeach
@@ -102,6 +118,5 @@
             </div>
         </div>
     </x-card>
-
 
 </x-app-layout>

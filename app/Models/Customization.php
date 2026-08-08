@@ -12,5 +12,6 @@ class Customization extends Model
         'delimiter',
         'sequence',
         'note',
+        'legal_note'
     ];
 }

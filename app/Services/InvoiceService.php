@@ -30,12 +30,14 @@ class InvoiceService
                 'invoice_date' => Carbon::parse($invoiceData['invoice_date'])->format('Y-m-d'),
                 'due_date' => Carbon::parse($invoiceData['due_date'])->format('Y-m-d'),
                 'customer_id' => $invoiceData['customer_id'],
+                'currency_id' => $invoiceData['currency_id'] ?? null,
                 'additional_cost' => $invoiceData['additional_cost'] ?? 0,
                 'discount' => $invoiceData['discount'] ?? 0,
                 'discount_type' => $invoiceData['discount_type'] ?? 'fixed',
                 'subtotal' => $subtotalWithTax,
                 'total' => $total,
                 'total_paid' => 0,
+                'service_period' => $invoiceData['service_period'] ?? 0,
                 'notes' => $invoiceData['notes'] ?? null,
             ]);
 
@@ -61,11 +63,13 @@ class InvoiceService
             $invoice->update([
                 'invoice_date' => Carbon::parse($invoiceData['invoice_date'])->format('Y-m-d'),
                 'due_date' => Carbon::parse($invoiceData['due_date'])->format('Y-m-d'),
+                'currency_id' => $invoiceData['currency_id'] ?? null,
                 'additional_cost' => $invoiceData['additional_cost'] ?? 0,
                 'discount' => $invoiceData['discount'] ?? 0,
                 'discount_type' => $invoiceData['discount_type'] ?? 'fixed',
                 'subtotal' => $subtotalWithTax,
                 'total' => $total,
+                'service_period' => $invoiceData['service_period'] ?? null,
                 'notes' => $invoiceData['notes'] ?? null,
             ]);
 

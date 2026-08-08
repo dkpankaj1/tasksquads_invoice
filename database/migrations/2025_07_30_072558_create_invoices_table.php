@@ -24,6 +24,8 @@ return new class extends Migration
             $table->decimal('subtotal', 10, 2)->default(0);
             $table->decimal('total', 10, 2)->default(0);
             $table->decimal('total_paid', 10, 2)->default(0);
+            $table->integer('service_period')->default(0);
+            $table->foreignId('currency_id')->constrained()->onDelete('cascade');
             $table->string('status')->default(Invoice::STATUS_UNPAID);
             $table->text('notes')->nullable();
             $table->timestamps();
