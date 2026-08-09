@@ -29,6 +29,13 @@
                     </div>
 
                     <div class="mb-3">
+                        <x-input-label name="treatment" text="Treatment" />
+                        <x-input-field name="treatment"
+                            value="{{ old('treatment', isset($treatment) ? $treatment->rate : '') }}"
+                            placeholder="Enter Treatment" />
+                    </div>
+
+                    <div class="mb-3">
                         <x-input-label name="status" text="Status" />
                         <x-input-select name="status">
                             <option value="1"

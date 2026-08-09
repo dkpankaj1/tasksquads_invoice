@@ -27,6 +27,7 @@ class SettingController extends Controller
             'account_type' => 'nullable|string|max:50',
             'account_number' => 'nullable|string|max:50',
             'ifsc_code' => 'nullable|string|max:20',
+            'iban' => 'nullable|string',
             'swift_bic_code' => 'nullable|string|max:20',
             'branch' => 'nullable|string|max:255',
 

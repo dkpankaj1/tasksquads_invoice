@@ -25,6 +25,7 @@ class TaxController extends Controller
                     ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title' => '#', 'searchable' => false, 'orderable' => false],
                     ['data' => 'name', 'name' => 'name', 'title' => 'Name'],
                     ['data' => 'rate', 'name' => 'rate', 'title' => 'Rate'],
+                    ['data' => 'treatment', 'name' => 'treatment', 'title' => 'Treatment'],
                     ['data' => 'active', 'name' => 'active', 'title' => 'Status'],
                     ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Created AT'],
                     ['data' => 'updated_at', 'name' => 'updated_at', 'title' => 'Updated AT'],
@@ -49,6 +50,7 @@ class TaxController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', Rule::unique(Tax::class, 'name')],
             'rate' => ['required', 'numeric', 'min:0', 'max:100'],
+            'treatment' => ['required', 'string'],
             'status' => ['required', 'in:0,1'],
         ]);
 
@@ -56,6 +58,7 @@ class TaxController extends Controller
             Tax::create([
                 'name' => $data['name'],
                 'rate' => $data['rate'],
+                'treatment' => $data['treatment'],
                 'active' => $data['status'],
             ]);
             Toastr::success(__('messages.success.created', ['item' => 'Tax type']));
@@ -88,6 +91,7 @@ class TaxController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', Rule::unique(Tax::class, 'name')->ignore($tax->id)],
             'rate' => ['required', 'numeric', 'min:0', 'max:100'],
+            'treatment' => ['required', 'string'],
             'status' => ['required', 'in:0,1'],
         ]);
 
@@ -95,6 +99,7 @@ class TaxController extends Controller
             $tax->update([
                 'name' => $data['name'],
                 'rate' => $data['rate'],
+                'treatment' => $data['treatment'],
                 'active' => $data['status'],
 
             ]);

@@ -110,6 +110,13 @@
                     </div>
                     <div class="col-md-4">
                         <div class="mb-3">
+                            <x-input-label name="iban" text="IBAN" />
+                            <x-input-field name="iban" type="text"
+                                value="{{ old('iban', $setting->iban ?? '') }}" placeholder="Enter IBAN code" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
                             <x-input-label name="ifsc_code" text="IFSC Code" />
                             <x-input-field name="ifsc_code" type="text"
                                 value="{{ old('ifsc_code', $setting->ifsc_code ?? '') }}"

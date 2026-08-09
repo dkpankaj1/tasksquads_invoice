@@ -27,6 +27,7 @@ class Setting extends Model
         'account_type',
         'account_number',
         'ifsc_code',
+        'iban',
         'swift_bic_code',
         'branch',
 

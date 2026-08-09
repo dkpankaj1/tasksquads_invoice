@@ -167,7 +167,9 @@
                 <strong>Country:</strong> {{ $invoice->customer->country ?? '' }}<br>
                 <strong>E-Mail:</strong> {{ $invoice->customer->email ?? '' }}<br>
                 <strong>Contact:</strong> {{ $invoice->customer->phone ?? '' }}<br>
-                <strong>VAT:</strong> {{ $invoice->customer->vat ?? '' }}<br>
+                @if ($invoice->customer->vat)
+                    <strong>VAT:</strong> {{ $invoice->customer->vat ?? '' }}<br>
+                @endif
             </td>
 
         </tr>
@@ -273,6 +275,7 @@
             <tr>
                 <th>Taxes</th>
                 <th>Rate</th>
+                <th>Treatment</th>
                 <th class="text-right">Taxable Value</th>
                 <th class="text-right">Total Tax Amount</th>
             </tr>
@@ -285,6 +288,7 @@
                 <tr>
                     <td>{{ $tax->name }}</td>
                     <td>{{ $tax->rate }} %</td>
+                    <td>{{ $tax->tax->treatment }}</td>
                     <td class="text-right">{!! format_money($invoice->invoiceItems->sum('amount'), $invoice->currency) !!}</td>
                     <td class="text-right">{!! format_money(($invoice->invoiceItems->sum('amount') * $tax->rate) / 100, $invoice->currency) !!}</td>
                 </tr>
@@ -296,11 +300,11 @@
 
         <tfoot>
             <tr>
-                <td class="text-right" colspan="3"><strong>Total</strong></td>
+                <td class="text-right" colspan="4"><strong>Total</strong></td>
                 <td class="text-right">{!! format_money($totalTaxAmount, $invoice->currency) !!}</td>
             </tr>
             <tr>
-                <td colspan="4">
+                <td colspan="5">
                     <div>
                         <span style="font-size: 9px">Tax Amount (in words):</span><br>
                         <strong>{{ ucwords(number_to_words($totalTaxAmount, $invoice->currency)) }} Only</strong>
@@ -334,7 +338,7 @@
                 <strong>Account Number:</strong> {{ $setting->account_number }}<br>
                 <strong>IFSC Code:</strong> {{ $setting->ifsc_code }} &nbsp;|&nbsp;
                 <strong>SWIFT/BIC Code:</strong> {{ $setting->swift_bic_code }}<br>
-                <strong>IBAN:</strong> XXXXXXXXXX <br>
+                <strong>IBAN:</strong> {{ $setting->iban }} <br>
                 <strong>Branch:</strong> {{ $setting->branch }} <br>
             </td>
             <td style="width: 50%; border: 1px solid #000; padding: 8px; text-align: right; vertical-align: top;">
