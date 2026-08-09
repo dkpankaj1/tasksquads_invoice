@@ -114,7 +114,7 @@
     </center>
     <table class="header-table">
         <tr>
-            <td class="company-header" colspan="2">
+            <td class="company-header" colspan="4">
                 <div class="logo-section">
                     @if ($setting)
                         <img src="{{ $setting->app_logo }}" alt="{{ $setting->brand_name ?? 'Company Logo' }}"
@@ -129,18 +129,22 @@
             </td>
         </tr>
         <tr>
-            <td style="width: 50%;">
+            <td style="width: 50%;" colspan="2">
                 <strong>Invoice No.</strong><br>
                 {{ $invoice->invoice_number }}<br>
             </td>
-            <td style="width: 50%;">
-                <strong>Dated</strong><br>
+            <td style="width: 25%;">
+                <strong>Invoice Date</strong><br>
                 {{ format_date($invoice->invoice_date) }}<br>
+            </td>
+            <td style="width: 25%;">
+                <strong>Due Date</strong><br>
+                {{ format_date($invoice->due_date) }}<br>
             </td>
         </tr>
 
         <tr>
-            <td style="width: 50%;">
+            <td colspan="2">
                 @if ($setting)
                     <strong>{{ $setting->brand_name }}</strong><br>
                     {{ $setting->address }}, {{ $setting->city }}<br>
@@ -157,18 +161,31 @@
                 @endif
             </td>
 
-            <td>
+            <td colspan="2">
                 <strong>Buyer (Bill to) : </strong><br>
-                <strong>{{ $invoice->customer?->full_name }}</strong><br>
-                {{ $invoice->customer?->address ?? '' }}<br>
-                {{ $invoice->customer?->city ?? '' }}, {{ $invoice->customer->state ?? '' }},
-                {{ $invoice->customer->pin_code }}<br>
-                <strong>State:</strong> {{ $invoice->customer->state ?? '' }}<br>
-                <strong>Country:</strong> {{ $invoice->customer->country ?? '' }}<br>
-                <strong>E-Mail:</strong> {{ $invoice->customer->email ?? '' }}<br>
-                <strong>Contact:</strong> {{ $invoice->customer->phone ?? '' }}<br>
-                @if ($invoice->customer->vat)
-                    <strong>VAT:</strong> {{ $invoice->customer->vat ?? '' }}<br>
+                @if ($invoice->customer?->full_name)
+                    <strong>{{ $invoice->customer->full_name }}</strong><br>
+                @endif
+                @if ($invoice->customer?->address)
+                    {{ $invoice->customer->address }}<br>
+                @endif
+                @if ($invoice->customer?->city || $invoice->customer?->state || $invoice->customer?->pin_code)
+                    {{ $invoice->customer->city ?? '' }}{{ $invoice->customer->city && ($invoice->customer->state || $invoice->customer->pin_code) ? ', ' : '' }}{{ $invoice->customer->state ?? '' }}{{ $invoice->customer->state && $invoice->customer->pin_code ? ', ' : '' }}{{ $invoice->customer->pin_code ?? '' }}<br>
+                @endif
+                @if ($invoice->customer?->state)
+                    <strong>State:</strong> {{ $invoice->customer->state }}<br>
+                @endif
+                @if ($invoice->customer?->country)
+                    <strong>Country:</strong> {{ $invoice->customer->country }}<br>
+                @endif
+                @if ($invoice->customer?->email)
+                    <strong>E-Mail:</strong> {{ $invoice->customer->email }}<br>
+                @endif
+                @if ($invoice->customer?->phone)
+                    <strong>Contact:</strong> {{ $invoice->customer->phone }}<br>
+                @endif
+                @if ($invoice->customer?->vat)
+                    <strong>VAT:</strong> {{ $invoice->customer->vat }}<br>
                 @endif
             </td>
 
@@ -332,14 +349,36 @@
     <table style="width: 100%; border-collapse: collapse;">
         <tr>
             <td style="width: 50%; border: 1px solid #000; padding: 8px; vertical-align: top;">
-                <strong>{{ $setting->beneficiary_name }}</strong><br>
-                <strong>Bank:</strong> {{ $setting->bank_name }}<br>
-                <strong>Account Type:</strong> {{ $setting->account_type }}<br>
-                <strong>Account Number:</strong> {{ $setting->account_number }}<br>
-                <strong>IFSC Code:</strong> {{ $setting->ifsc_code }} &nbsp;|&nbsp;
-                <strong>SWIFT/BIC Code:</strong> {{ $setting->swift_bic_code }}<br>
-                <strong>IBAN:</strong> {{ $setting->iban }} <br>
-                <strong>Branch:</strong> {{ $setting->branch }} <br>
+                @if ($setting->beneficiary_name)
+                    <strong>{{ $setting->beneficiary_name }}</strong><br>
+                @endif
+                @if ($setting->bank_name)
+                    <strong>Bank:</strong> {{ $setting->bank_name }}<br>
+                @endif
+                @if ($setting->account_type)
+                    <strong>Account Type:</strong> {{ $setting->account_type }}<br>
+                @endif
+                @if ($setting->account_number)
+                    <strong>Account Number:</strong> {{ $setting->account_number }}<br>
+                @endif
+                @if ($setting->ifsc_code || $setting->swift_bic_code)
+                    @if ($setting->ifsc_code)
+                        <strong>IFSC Code:</strong> {{ $setting->ifsc_code }}
+                    @endif
+                    @if ($setting->ifsc_code && $setting->swift_bic_code)
+                        &nbsp;|&nbsp;
+                    @endif
+                    @if ($setting->swift_bic_code)
+                        <strong>SWIFT/BIC Code:</strong> {{ $setting->swift_bic_code }}
+                    @endif
+                    <br>
+                @endif
+                @if ($setting->iban)
+                    <strong>IBAN:</strong> {{ $setting->iban }}<br>
+                @endif
+                @if ($setting->branch)
+                    <strong>Branch:</strong> {{ $setting->branch }}<br>
+                @endif
             </td>
             <td style="width: 50%; border: 1px solid #000; padding: 8px; text-align: right; vertical-align: top;">
                 for {{ $setting->brand_name ?? 'Your Company Name' }}<br><br>
