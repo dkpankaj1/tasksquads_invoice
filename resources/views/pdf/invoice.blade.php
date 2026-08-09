@@ -382,7 +382,7 @@
             </td>
             <td style="width: 50%; border: 1px solid #000; padding: 8px; text-align: right; vertical-align: top;">
                 for {{ $setting->brand_name ?? 'Your Company Name' }}<br><br>
-                <img style="height: 100px" src="{{ $setting->stamp_image }}" alt="">
+                <img style="height: 90px" src="{{ $setting->stamp_image }}" alt="">
                 </br>
                 <small>Authorized Signatory</small>
 
