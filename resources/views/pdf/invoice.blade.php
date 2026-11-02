@@ -197,10 +197,10 @@
         <thead>
             <tr>
                 <th style="width:5%">SN</th>
-                <th style="width:33%">Item</th>
+                <th style="width:35%">Item</th>
                 <th style="width:5%">HSN/SAC</th>
                 <th style="width:10%" class="text-right">Term/Unit</th>
-                <th style="width:13%" class="text-right">Rate</th>
+                <th style="width:11%" class="text-right">Rate</th>
                 <th style="width:7%" class="text-right">Per</th>
                 <th style="width:12%" class="text-right">Add. Cost</th>
                 <th style="width:15%" class="text-right">Amount</th>
