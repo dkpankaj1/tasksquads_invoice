@@ -109,7 +109,7 @@
     <!-- Header Section -->
     <center>
         <p colspan="2" style="font-weight: bold;text-align: center; font-size: 0.8rem; padding:0;margin:0">
-            {{ text_uppercase('Tax Invoice') }}
+            {{ text_uppercase('Invoice') }}
         </p>
     </center>
     <table class="header-table">
@@ -212,7 +212,7 @@
                     <td>{{ $key + 1 }}</td>
                     <td>
                         <strong>{{ $row->item?->name }}</strong><br>
-                        <span class="small">{{ $row->description }}</span>
+                        <span class="small">{!! nl2br(e($row->description)) !!}</span>
                     </td>
                     <td>{{ $row->item?->hsn_code }}</td>
                     <td class="text-right">{{ number_format((float) $row->quantity, 2) }}</td>

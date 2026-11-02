@@ -65,7 +65,6 @@
                 {{-- searchItem::end --}}
                 <p class="my-1 text-bold"><i class="mdi mdi-check"></i> Search item by name, barcode or HSN code.</p>
 
-
             </div>
 
         </div>

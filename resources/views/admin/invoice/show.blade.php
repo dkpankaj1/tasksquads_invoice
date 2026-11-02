@@ -96,7 +96,7 @@
                                 <td>
                                     <strong>{{ $item->item?->name }}</strong>
                                     @if ($item->description)
-                                        <br><small class="text-muted">{{ $item->description }}</small>
+                                        <br><small class="text-muted">{!! nl2br(e($item->description)) !!}</small>
                                     @endif
                                 </td>
                                 <td>{{ $item->item?->hsn_code }}</td>
